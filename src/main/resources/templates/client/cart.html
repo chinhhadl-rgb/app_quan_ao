@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <nav class="nav">
+        <a th:href="@{/products}">Sản phẩm</a>
+        <a th:href="@{/cart}">Giỏ hàng</a>
+    </nav>
+    
+    <div class="container narrow">
+        <h1 style="text-align: center; margin-bottom: 40px; font-size: 32px;">Giỏ hàng của bạn</h1>
+        
+        <div th:if="${#lists.isEmpty(items)}" class="panel" style="text-align: center; padding: 48px;">
+            <p style="color: #86868b; font-size: 18px; margin-bottom: 24px;">Giỏ hàng đang trống.</p>
+            <a class="button" th:href="@{/products}">Tiếp tục mua sắm</a>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(items)}">
+            <div class="panel" style="padding: 0; margin-bottom: 32px;">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Phân loại</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Tạm tính</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${items}">
+                        <td style="font-weight: 500;">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <img th:src="${item.thumbnail}" style="width:48px; height:48px; object-fit:contain; border-radius:4px; background:#f5f5f7;">
+                                <span th:text="${item.name}">Ten</span>
+                            </div>
+                        </td>
+                        <td style="color:#86868b; font-size:14px;" th:text="${item.size + ' - ' + item.color}">Variant</td>
+                        <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
+                        <td>
+                            <form th:action="@{/cart/update}" method="post" class="inline" style="margin:0;">
+                                <input type="hidden" name="cartId" th:value="${item.cart_id}">
+                                <input type="number" name="quantity" min="0" th:value="${item.quantity}" style="width:60px; padding:8px;">
+                                <button type="submit" style="padding:8px 12px; font-size:13px; background:#f5f5f7; color:#1d1d1f;">Cập nhật</button>
+                            </form>
+                        </td>
+                        <td style="font-weight:600;" th:text="${#numbers.formatDecimal(item.line_total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
+                        <td>
+                            <form th:action="@{/cart/remove}" method="post" style="margin:0;">
+                                <input type="hidden" name="cartId" th:value="${item.cart_id}">
+                                <button type="submit" style="background:transparent; color:#ff3b30; font-size:13px; font-weight:500;">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="margin:0; color:#86868b; font-size:14px;">Tổng thanh toán</p>
+                    <h2 style="margin:4px 0 0 0; font-size:28px;" th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">Tong</h2>
+                </div>
+                <a class="button" th:href="@{/checkout}" style="padding: 16px 32px; font-size: 16px;">Tiến hành thanh toán</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

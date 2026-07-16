@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quan ly san pham</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thống kê</a>
+        <a th:href="@{/admin/revenue}">Thu nhập</a>
+        <a th:href="@{/admin/products}">Sản phẩm</a>
+        <a th:href="@{/admin/brands}">Thương hiệu</a>
+        <a th:href="@{/admin/orders}">Đơn hàng</a>
+        <a th:href="@{/admin/users}">Người dùng</a>
+        <a th:href="@{/products}">Về shop</a>
+    </nav>
+
+    <h1>Quan ly san pham</h1>
+    <form th:action="@{/admin/products/save}" method="post" class="form panel">
+        <h2>Thêm sản phẩm</h2>
+        <label>Danh mục</label>
+        <select name="categoryId">
+            <option value="">Không chọn</option>
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">Danh mục</option>
+        </select>
+        <label>Thương hiệu</label>
+        <select name="brandId">
+            <option value="">Không chọn</option>
+            <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}">Thương hiệu</option>
+        </select>
+        <label>Tên</label>
+        <input name="name" required>
+        <label>Slug</label>
+        <input name="slug" required>
+        <label>Giá gốc</label>
+        <input type="number" name="basePrice" required>
+        <label>Giá sale</label>
+        <input type="number" name="salePrice">
+        <label>Thumbnail</label>
+        <input name="thumbnail" required placeholder="/images/product.jpg hoặc URL">
+        <label>Mô tả</label>
+        <textarea name="description"></textarea>
+        <button type="submit">Lưu sản phẩm</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Danh mục</th>
+            <th>Thương hiệu</th>
+            <th>Giá</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}">1</td>
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img th:src="${product.thumbnail}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                    <span th:text="${product.name}">Tên</span>
+                </div>
+            </td>
+            <td th:text="${product.category_name}">Danh mục</td>
+            <td th:text="${product.brand_name}">Thương hiệu</td>
+            <td th:text="${#numbers.formatDecimal(product.base_price, 0, 'COMMA', 0, 'POINT')}">0</td>
+            <td>
+                <span th:if="${product.status == 1}" style="color: #34c759; font-size: 12px; font-weight: 600;">ĐANG BÁN</span>
+                <span th:if="${product.status == 0}" style="color: #ff3b30; font-size: 12px; font-weight: 600;">ĐÃ XÓA</span>
+            </td>
+            <td>
+                <div style="display: flex; gap: 8px;">
+                    <a th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="button" style="padding: 6px 12px; font-size: 12px; background: #f5f5f7; color: #1d1d1f;">Sửa</a>
+                    <form th:action="@{/admin/products/delete}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
+                        <input type="hidden" name="id" th:value="${product.id}">
+                        <button type="submit" style="padding: 6px 12px; font-size: 12px; background: #ff3b30;">Xóa</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

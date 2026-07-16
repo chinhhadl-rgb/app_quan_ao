@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quan ly don hang</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thống kê</a>
+        <a th:href="@{/admin/revenue}">Thu nhập</a>
+        <a th:href="@{/admin/products}">Sản phẩm</a>
+        <a th:href="@{/admin/brands}">Thương hiệu</a>
+        <a th:href="@{/admin/orders}">Đơn hàng</a>
+        <a th:href="@{/admin/users}">Người dùng</a>
+        <a th:href="@{/products}">Về shop</a>
+    </nav>
+
+    <h1>Quan ly don hang</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Khach</th>
+            <th>Nguoi nhan</th>
+            <th>Sản phẩm</th>
+            <th>Tổng tiền</th>
+            <th>Thanh toan</th>
+            <th>Trang thai</th>
+            <th>Cap nhat</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}">1</td>
+            <td th:text="${order.username}">user</td>
+            <td>
+                <strong th:text="${order.shipping_fullname}">Ten</strong><br>
+                <span th:text="${order.shipping_phone}">Phone</span><br>
+                <span th:text="${order.shipping_address}">Dia chi</span>
+            </td>
+            <td>
+                <div th:each="item : ${order.items}" style="font-size: 12px; margin-bottom: 4px; padding: 4px; background: #f9f9f9; border-radius: 4px;">
+                    <span th:text="${item.product_name}">Tên</span>
+                    <span th:text="' - Size: ' + ${item.size}">Size</span>
+                    <br>
+                    <form th:action="@{/admin/orders/item/quantity}" method="post" style="display: inline-flex; align-items: center; gap: 4px; margin-top: 2px;">
+                        <input type="hidden" name="orderId" th:value="${order.id}">
+                        <input type="hidden" name="detailId" th:value="${item.detail_id}">
+                        <input type="number" name="quantity" th:value="${item.quantity}" min="1" style="width: 50px; padding: 2px 4px; font-size: 11px;">
+                        <button type="submit" style="padding: 2px 6px; font-size: 10px; background: #0071e3;">Sửa</button>
+                    </form>
+                </div>
+            </td>
+            <td th:text="${#numbers.formatDecimal(order.total_final, 0, 'COMMA', 0, 'POINT')}">0</td>
+            <td th:text="${order.payment_method + ' - ' + order.payment_status}">COD</td>
+            <td th:text="${order.order_status}">Pending</td>
+            <td>
+                <form th:action="@{/admin/orders/status}" method="post" class="inline">
+                    <input type="hidden" name="id" th:value="${order.id}">
+                    <select name="status">
+                        <option value="Pending" th:selected="${order.order_status == 'Pending'}">Cho duyet</option>
+                        <option value="Confirmed" th:selected="${order.order_status == 'Confirmed'}">Da xac nhan</option>
+                        <option value="Shipping" th:selected="${order.order_status == 'Shipping'}">Dang giao</option>
+                        <option value="Delivered" th:selected="${order.order_status == 'Delivered'}">Da giao</option>
+                        <option value="Cancelled" th:selected="${order.order_status == 'Cancelled'}">Da huy</option>
+                    </select>
+                    <button type="submit">Luu</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

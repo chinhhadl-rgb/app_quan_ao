@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name}">Chi tiet san pham</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <nav class="nav">
+        <a th:href="@{/products}">Sản phẩm</a>
+        <a th:href="@{/cart}">Giỏ hàng</a>
+    </nav>
+    
+    <div class="container">
+        <div class="detail">
+            <div>
+                <img th:src="${product.thumbnail}" th:alt="${product.name}">
+            </div>
+            <section>
+                <h1 th:text="${product.name}">Ten san pham</h1>
+                <p class="category" th:text="${product.category_name}">Danh muc</p>
+                
+                <!-- Hiển thị Giá có sale và gốc -->
+                <div class="price">
+                    <span th:text="${#numbers.formatDecimal(product.sale_price != null ? product.sale_price : product.base_price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 VND</span>
+                    <span th:if="${product.sale_price != null}" 
+                          style="text-decoration: line-through; color: #86868b; font-size: 18px; margin-left: 12px;"
+                          th:text="${#numbers.formatDecimal(product.base_price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                </div>
+                
+                <p th:text="${product.description}" style="line-height: 1.6; color: #333; margin-bottom: 32px;">Mo ta</p>
+
+                <form th:action="@{/cart/add}" method="post" class="form">
+                    <!-- Hiển thị lựa chọn biến thể -->
+                    <div th:if="${!variants.isEmpty()}">
+                        <!-- Nếu là Đồng hồ hoặc chỉ có 1 biến thể -->
+                        <div th:if="${#strings.toLowerCase(product.category_name) == 'đồng hồ' or variants.size() == 1}">
+                            <input type="hidden" name="variantId" th:value="${variants[0].id}">
+                            <p style="color: #86868b; font-size: 14px; margin-bottom: 16px;">
+                                <span th:if="${variants.size() == 1 and variants[0].size != 'None'}" 
+                                      th:text="'Kích cỡ: ' + ${variants[0].size}"></span>
+                                <i th:if="${#strings.toLowerCase(product.category_name) == 'đồng hồ'}" 
+                                   style="opacity: 0.7;">(Sản phẩm không phân loại kích cỡ)</i>
+                            </p>
+                        </div>
+
+                        <!-- Nếu có nhiều kích cỡ và không phải đồng hồ -->
+                        <div th:if="${#strings.toLowerCase(product.category_name) != 'đồng hồ' and variants.size() > 1}">
+                            <label style="display:block; margin-bottom:8px; font-weight:500; color:#86868b;">Kích cỡ</label>
+                            <select name="variantId" required style="width:100%;">
+                                <option value="">-- Chọn kích cỡ --</option>
+                                <option th:each="variant : ${variants}"
+                                        th:value="${variant.id}"
+                                        th:disabled="${variant.stock_quantity <= 0}"
+                                        th:text="${variant.size + (variant.stock_quantity <= 0 ? ' (Hết hàng)' : ' (Còn ' + variant.stock_quantity + ')')}"
+                                        th:selected="${variants.size() == 1}">Variant</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <label style="display:block; margin-bottom:8px; font-weight:500; color:#86868b;">Số lượng</label>
+                            <input type="number" name="quantity" value="1" min="1" style="width:100px;">
+                        </div>
+
+                        <button type="submit" style="margin-top: 24px; width: 100%;">
+                            Thêm vào giỏ hàng
+                        </button>
+                    </div>
+
+                    <!-- Nếu hoàn toàn không có dữ liệu biến thể trong DB -->
+                    <div th:if="${variants.isEmpty()}">
+                        <p style="color: #ff3b30; font-weight: 600; margin-bottom: 16px;">Sản phẩm hiện đang được cập nhật...</p>
+                        <button type="button" disabled style="background: #ccc; cursor: not-allowed; width: 100%;">Hết hàng</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

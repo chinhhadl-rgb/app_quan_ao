@@ -1,0 +1,1102 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap');
+
+:root {
+    --apple-bg: #fbfbfd;
+    --apple-text: #1d1d1f;
+    --apple-text-secondary: #86868b;
+    --apple-blue: #0071e3;
+    --apple-blue-hover: #0077ed;
+    --apple-border: #d2d2d7;
+    --apple-card-bg: #ffffff;
+    --radius-sm: 8px;
+    --radius-md: 18px;
+    --radius-lg: 24px;
+    --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    background-color: var(--apple-bg);
+    color: var(--apple-text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+}
+
+/* Admin Specific Style - Unified with Client */
+.admin-body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f5f7;
+}
+
+h1, .products-title-custom {
+    font-size: 36px;
+    font-weight: 200;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 32px;
+    color: var(--apple-text);
+}
+
+.products-subtitle-custom {
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-align: center;
+    color: var(--apple-text-secondary);
+    margin-bottom: 40px;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 32px 24px;
+}
+
+.narrow {
+    max-width: 600px;
+}
+
+/* Navigation - Minimalist Apple Style */
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px 0;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: saturate(180%) blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav a {
+    color: var(--apple-text);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+}
+
+.nav a:hover {
+    color: var(--apple-blue);
+}
+
+.nav form {
+    margin: 0;
+}
+
+.nav button {
+    background: none;
+    color: var(--apple-text);
+    font-weight: 400;
+    font-size: 14px;
+    padding: 0;
+}
+.nav button:hover {
+    color: var(--apple-blue);
+    background: none;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Buttons */
+.button,
+button {
+    background: var(--apple-blue);
+    border: none;
+    border-radius: 980px; /* Pill shape */
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 12px 24px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.button:hover,
+button:hover {
+    background: var(--apple-blue-hover);
+    transform: scale(1.02);
+}
+
+/* Forms & Filters */
+.filters,
+.form {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.filters {
+    grid-template-columns: 1fr 1fr 1fr auto;
+    align-items: center;
+}
+
+input,
+select,
+textarea {
+    border: 1px solid var(--apple-border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 15px;
+    padding: 12px 16px;
+    background: var(--apple-card-bg);
+    color: var(--apple-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Grid & Cards */
+.grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.card,
+.panel {
+    background: var(--apple-card-bg);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.card img {
+    aspect-ratio: 1 / 1;
+    background: transparent;
+    border-radius: var(--radius-sm);
+    object-fit: contain;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.card h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+}
+
+.card p {
+    color: var(--apple-text-secondary);
+    font-size: 14px;
+    margin: 0 0 12px 0;
+}
+
+.card strong {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.card .button {
+    margin-top: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Product Detail */
+.detail {
+    background: var(--apple-card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    display: grid;
+    gap: 48px;
+    grid-template-columns: 1fr 1fr;
+    padding: 48px;
+    align-items: center;
+}
+
+.detail img {
+    border-radius: var(--radius-md);
+    object-fit: contain;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.detail h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.detail p.category {
+    color: var(--apple-text-secondary);
+    font-size: 16px;
+    margin-bottom: 24px;
+}
+
+.detail .price {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 32px;
+}
+
+/* Tables (Cart / Admin) */
+table {
+    background: var(--apple-card-bg);
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+th,
+td {
+    padding: 16px 20px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--apple-border);
+}
+
+th {
+    background: #f5f5f7;
+    font-weight: 500;
+    color: var(--apple-text-secondary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* Utilities */
+.inline {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 48px;
+}
+
+.pagination a {
+    color: var(--apple-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.pagination a:hover {
+    text-decoration: underline;
+}
+
+.error {
+    background: #fff4f4;
+    border-left: 4px solid #ff3b30;
+    color: #ff3b30;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+}
+
+@media (max-width: 860px) {
+    .filters {
+        grid-template-columns: 1fr;
+    }
+    .detail {
+        grid-template-columns: 1fr;
+        padding: 24px;
+        gap: 32px;
+    }
+}
+
+/* ==========================================
+   CSS DÀNH RIÊNG CHO TRANG CHỦ & SLIDER 100VH
+   ========================================== */
+
+.home-body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: #000;
+    width: 100%;
+}
+
+/* Translucent Overlay Navbar */
+.home-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 8%;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px) saturate(160%);
+    -webkit-backdrop-filter: blur(15px) saturate(160%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+    margin: 0; /* Đảm bảo không có margin gây lệch */
+}
+
+.home-nav .nav-brand {
+    font-size: 24px;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: #fff;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.home-nav .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.home-nav .nav-links a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+.home-nav .nav-links a:hover {
+    color: #fff;
+}
+
+.home-nav .logout-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+.home-nav .logout-btn:hover {
+    color: #fff;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Fullscreen Slider */
+.slider-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #000;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+.slide.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.75); /* Làm tối nhẹ ảnh để chữ màu trắng hiển thị cực kì rõ ràng */
+}
+
+.slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.4) 100%);
+    z-index: 3;
+}
+
+/* Slide Content */
+.slide-content {
+    position: absolute;
+    bottom: 15%;
+    left: 8%;
+    color: #fff;
+    z-index: 4;
+    max-width: 650px;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    transition-delay: 0.3s;
+}
+
+.slide.active .slide-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.collection-tag {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 15px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.collection-title {
+    font-size: 56px;
+    font-weight: 200; /* Dạng chữ mỏng sang trọng */
+    letter-spacing: 0.08em;
+    margin: 0 0 20px 0;
+    line-height: 1.15;
+    text-transform: uppercase;
+}
+
+.collection-desc {
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 40px;
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+}
+
+.collection-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    border: 1px solid #fff;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: transparent;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    border-radius: 0; /* Bo góc vuông cho phong cách high-fashion */
+}
+
+.collection-btn:hover {
+    background: #fff;
+    color: #000;
+    transform: translateY(-2px);
+}
+
+/* Arrows */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background 0.3s, transform 0.2s;
+    outline: none;
+}
+
+.slider-arrow:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.prev-arrow { left: 4%; }
+.next-arrow { right: 4%; }
+
+/* Dots */
+.slider-dots {
+    position: absolute;
+    bottom: 6%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 10;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.dot.active {
+    background: #fff;
+    width: 28px;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    .collection-title {
+        font-size: 38px;
+    }
+    .collection-desc {
+        font-size: 14px;
+    }
+    .home-nav {
+        padding: 15px 5%;
+    }
+    .slider-arrow {
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
+    }
+    .slide-content {
+        left: 5%;
+        right: 5%;
+        bottom: 12%;
+    }
+}
+
+/* ==========================================
+   CSS DÀNH CHO TRANG DANH SÁCH SẢN PHẨM APPLE
+   ========================================== */
+
+.apple-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 40px 24px;
+    margin-top: 40px;
+}
+
+.apple-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--apple-text);
+    position: relative;
+    cursor: pointer;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    transition: transform 0.3s ease;
+}
+
+.apple-card:hover {
+    transform: translateY(-2px);
+    box-shadow: none;
+}
+
+.apple-card-img-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background-color: #f5f5f7; /* Nền xám nhạt Apple */
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.apple-card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.4s ease;
+}
+
+.color-swatches {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    justify-content: center;
+}
+
+.swatch-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.swatch-dot:hover, .swatch-dot.active {
+    transform: scale(1.25);
+    border-color: #000;
+}
+
+.apple-card .product-title {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0 0 6px 0;
+    text-align: center;
+    letter-spacing: -0.01em;
+    color: #1d1d1f;
+}
+
+.apple-card .product-category {
+    font-size: 13px;
+    color: #86868b;
+    margin: 0 0 8px 0;
+    text-align: center;
+}
+
+.apple-card .product-price {
+    font-size: 15px;
+    font-weight: 400;
+    text-align: center;
+    color: #1d1d1f;
+}
+
+@media (max-width: 768px) {
+    .apple-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 cột trên điện thoại để hiển thị đẹp mắt */
+        gap: 24px 16px;
+    }
+}
+
+/* ==========================================
+   CSS DÀNH CHO TRANG ĐĂNG NHẬP SPLIT-SCREEN
+   ========================================== */
+
+.login-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.login-banner {
+    position: relative;
+    flex: 1.2;
+    background-color: #1d1d1f;
+    overflow: hidden;
+}
+
+.login-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) brightness(0.6); /* Đen trắng nghệ thuật thời trang */
+    transition: transform 10s ease;
+}
+
+.login-banner:hover img {
+    transform: scale(1.05);
+}
+
+.login-banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 2;
+}
+
+.login-banner-top {
+    position: absolute;
+    top: 10%;
+    left: 8%;
+    right: 8%;
+    color: #ffffff;
+    z-index: 3;
+}
+
+.login-banner-bottom {
+    position: absolute;
+    bottom: 10%;
+    left: 8%;
+    right: 8%;
+    color: #ffffff;
+    z-index: 3;
+}
+
+.login-banner-brand {
+    font-size: 34px; /* Phóng to lên thêm xíu */
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.login-banner-quote {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+    max-width: 500px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+}
+
+.login-form-container {
+    flex: 0.8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 8%;
+    box-sizing: border-box;
+    position: relative;
+    background-color: #ffffff;
+}
+
+.login-back-home {
+    position: absolute;
+    top: 40px;
+    right: 8%;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #86868b;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.login-back-home:hover {
+    color: #1d1d1f;
+}
+
+.login-form-box {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.login-title {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #1d1d1f;
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    font-size: 14px;
+    color: #86868b;
+    margin-bottom: 36px;
+    font-weight: 300;
+}
+
+.login-input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 24px;
+}
+
+.login-input-group label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #86868b;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.login-input {
+    border: none;
+    border-bottom: 1px solid #d2d2d7;
+    border-radius: 0;
+    background: transparent;
+    padding: 10px 0;
+    font-size: 15px;
+    color: #1d1d1f;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.login-input:focus {
+    border-color: #1d1d1f;
+    box-shadow: none;
+}
+
+.login-btn-black {
+    width: 100%;
+    background-color: #1d1d1f;
+    color: #ffffff;
+    border: 1px solid #1d1d1f;
+    border-radius: 0;
+    padding: 14px 20px;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.3s ease;
+}
+
+.login-btn-black:hover {
+    background-color: #ffffff;
+    color: #1d1d1f;
+    transform: none;
+}
+
+.login-switch-page {
+    font-size: 14px;
+    color: #86868b;
+    text-align: center;
+    margin-top: 32px;
+    font-weight: 300;
+}
+
+.login-switch-page a {
+    color: #1d1d1f;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid #1d1d1f;
+    padding-bottom: 2px;
+    transition: opacity 0.2s ease;
+}
+
+.login-switch-page a:hover {
+    opacity: 0.7;
+}
+
+@media (max-width: 1024px) {
+    .login-banner {
+        display: none; /* Ẩn banner trên màn hình nhỏ/máy tính bảng đứng */
+    }
+    .login-form-container {
+        flex: 1;
+        padding: 40px 10%;
+    }
+}
+
+/* ==========================================
+   CSS CHO THANH MENU DANH MỤC PHÂN CẤP (APPLE/ZARA STYLE)
+   ========================================== */
+
+.categories-menu-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    background: #f5f5f7; /* Nền xám nhạt Apple */
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+    z-index: 99;
+    position: relative;
+}
+
+.category-item {
+    position: relative;
+    padding: 6px 0;
+}
+
+.category-link {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #1d1d1f;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.category-link:hover {
+    color: var(--apple-blue);
+}
+
+.category-link::after {
+    content: "▾";
+    font-size: 10px;
+}
+
+/* Dropdown Menu xổ xuống */
+.category-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background-color: #ffffff;
+    min-width: 180px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 8px;
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease;
+    z-index: 999;
+}
+
+.category-item:hover .category-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.category-dropdown a {
+    display: block;
+    padding: 10px 20px;
+    color: #1d1d1f;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: background-color 0.2s, color 0.2s;
+    text-align: center;
+}
+
+.category-dropdown a:hover {
+    background-color: #f5f5f7;
+    color: var(--apple-blue);
+}
+
+/* BỘ LỌC THƯƠNG HIỆU PHỤ DẠNG CHECKBOX */
+.brand-filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: #fbfbfd;
+    padding: 14px 24px;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    margin-bottom: 32px;
+    align-items: center;
+}
+
+.brand-filter-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #1d1d1f;
+    margin-right: 12px;
+}
+
+.brand-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.brand-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #1d1d1f;
+    cursor: pointer;
+    font-weight: 400;
+    transition: opacity 0.2s ease;
+}
+
+.brand-checkbox-label:hover {
+    opacity: 0.8;
+}
+
+.brand-checkbox-label input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: #1d1d1f; /* Checkbox màu đen thời trang */
+}
+
+/* Tinh chỉnh typography trang sản phẩm cho đồng nhất với Login */
+.products-title-custom {
+    font-size: 36px;
+    font-weight: 200; /* Mỏng sang trọng */
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #1d1d1f;
+}
+
+.products-subtitle-custom {
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-align: center;
+    color: #86868b;
+    margin-bottom: 40px;
+}
+
+
+
+
