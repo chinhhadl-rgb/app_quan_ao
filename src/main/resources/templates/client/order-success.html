@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dat hang thanh cong</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="container narrow">
+    <h1>Dat hang thanh cong</h1>
+    <p th:text="'Ma don hang cua ban: #' + ${orderId}">Ma don hang</p>
+    <a class="button" th:href="@{/products}">Tiep tuc mua sam</a>
+</div>
+</body>
+</html>

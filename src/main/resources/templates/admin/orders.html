@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quan ly don hang</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thong ke</a>
+        <a th:href="@{/admin/products}">San pham</a>
+        <a th:href="@{/admin/orders}">Don hang</a>
+    </nav>
+
+    <h1>Quan ly don hang</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Khach</th>
+            <th>Nguoi nhan</th>
+            <th>Tong tien</th>
+            <th>Thanh toan</th>
+            <th>Trang thai</th>
+            <th>Cap nhat</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.id}">1</td>
+            <td th:text="${order.username}">user</td>
+            <td>
+                <strong th:text="${order.shipping_fullname}">Ten</strong><br>
+                <span th:text="${order.shipping_phone}">Phone</span><br>
+                <span th:text="${order.shipping_address}">Dia chi</span>
+            </td>
+            <td th:text="${#numbers.formatDecimal(order.total_final, 0, 'COMMA', 0, 'POINT')}">0</td>
+            <td th:text="${order.payment_method + ' - ' + order.payment_status}">COD</td>
+            <td th:text="${order.order_status}">Pending</td>
+            <td>
+                <form th:action="@{/admin/orders/status}" method="post" class="inline">
+                    <input type="hidden" name="id" th:value="${order.id}">
+                    <select name="status">
+                        <option value="Pending" th:selected="${order.order_status == 'Pending'}">Cho duyet</option>
+                        <option value="Confirmed" th:selected="${order.order_status == 'Confirmed'}">Da xac nhan</option>
+                        <option value="Shipping" th:selected="${order.order_status == 'Shipping'}">Dang giao</option>
+                        <option value="Delivered" th:selected="${order.order_status == 'Delivered'}">Da giao</option>
+                        <option value="Cancelled" th:selected="${order.order_status == 'Cancelled'}">Da huy</option>
+                    </select>
+                    <button type="submit">Luu</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toan</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <nav class="nav">
+        <a th:href="@{/products}">Sản phẩm</a>
+        <a th:href="@{/cart}">Giỏ hàng</a>
+    </nav>
+    <div class="container narrow">
+        <h1 style="text-align: center; margin-bottom: 40px; font-size: 32px;">Thông tin thanh toán</h1>
+        <p class="error" th:if="${error}" th:text="${error}">Lỗi</p>
+
+        <form th:action="@{/checkout}" method="post" class="form panel">
+            <div>
+                <label style="display:block; margin-bottom:8px; font-weight:500; color:#86868b;">Họ và tên</label>
+                <input name="fullname" required th:value="${user.fullname}" style="width:100%; box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label style="display:block; margin-bottom:8px; font-weight:500; color:#86868b;">Số điện thoại</label>
+                <input name="phone" required th:value="${user.phone}" style="width:100%; box-sizing:border-box;">
+            </div>
+
+            <div>
+                <label style="display:block; margin-bottom:8px; font-weight:500; color:#86868b;">Địa chỉ giao hàng</label>
+                <textarea name="address" required th:text="${user.address}" style="width:100%; box-sizing:border-box;"></textarea>
+            </div>
+
+            <div>
+                <label style="display:block; margin-bottom:8px; font-weight:500; color:#86868b;">Ghi chú đơn hàng (Tùy chọn)</label>
+                <textarea name="note" style="width:100%; box-sizing:border-box;"></textarea>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--apple-border); margin: 24px 0;">
+
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px; color:#86868b;">
+                <span>Tiền hàng</span>
+                <span th:text="${#numbers.formatDecimal(totalRaw, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:24px; color:#86868b;">
+                <span>Phí giao hàng</span>
+                <span th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+                <span style="font-weight:500; font-size:18px;">Tổng thanh toán</span>
+                <span style="font-size:28px; font-weight:600; color:var(--apple-blue);" th:text="${#numbers.formatDecimal(totalFinal, 0, 'COMMA', 0, 'POINT')} + ' ₫'">Tong</span>
+            </div>
+
+            <button type="submit" style="width:100%; font-size:16px; padding:16px;">Hoàn tất đặt hàng (Thanh toán khi nhận hàng)</button>
+        </form>
+    </div>
+</body>
+</html>

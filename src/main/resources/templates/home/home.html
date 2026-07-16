@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinh Fashion | Home</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="home-body">
+
+    <!-- THANH NAVBAR TRONG SUỐT VÀ MỜ XUYÊN THẤU (BACKDROP-BLUR) -->
+    <nav class="home-nav">
+        <a th:href="@{/}" class="nav-brand">CHINH FASHION</a>
+        <div class="nav-links">
+            <a th:href="@{/products}">Sản phẩm</a>
+            <a th:href="@{/cart}">Giỏ hàng</a>
+            <a th:href="@{/login}" th:if="${session.userId == null}">Đăng nhập</a>
+            <form th:action="@{/logout}" method="post" th:if="${session.userId != null}" style="display: inline;">
+                <button type="submit" class="logout-btn">Đăng xuất</button>
+            </form>
+            <a th:href="@{/admin}" th:if="${session.role == 'admin' || session.role == 'staff'}">Admin</a>
+        </div>
+    </nav>
+
+    <!-- SECTION SLIDER QUẢNG CÁO FULL MÀN HÌNH (100VH) -->
+    <div class="slider-container">
+        
+        <!-- BỘ SƯU TẬP 1 -->
+        <div class="slide active">
+            <!-- 
+                ==========================================================
+                DÁN LINK ẢNH BỘ SƯU TẬP 1 VÀO THUỘC TÍNH src DƯỚI ĐÂY
+                Ví dụ: src="https://ten-mien-cua-ban.com/hinh-anh.jpg"
+                ==========================================================
+            -->
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop" alt="Bộ sưu tập Mùa Hè">
+            <div class="slide-overlay"></div>
+            <div class="slide-content">
+                <span class="collection-tag">NEW SEASON</span>
+                <h1 class="collection-title">Mùa Hè Rực Rỡ</h1>
+                <p class="collection-desc">Khám phá các thiết kế tối giản, thanh lịch giúp bạn luôn cảm thấy thoải mái và tự tin dưới nắng ấm.</p>
+                <a th:href="@{/products}" class="collection-btn">Khám Phá Ngay</a>
+            </div>
+        </div>
+
+        <!-- BỘ SƯU TẬP 2 -->
+        <div class="slide">
+            <!-- 
+                ==========================================================
+                DÁN LINK ẢNH BỘ SƯU TẬP 2 VÀO THUỘC TÍNH src DƯỚI ĐÂY
+                Ví dụ: src="https://ten-mien-cua-ban.com/hinh-anh.jpg"
+                ==========================================================
+            -->
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" alt="Bộ sưu tập Mùa Thu">
+            <div class="slide-overlay"></div>
+            <div class="slide-content">
+                <span class="collection-tag">PRE-FALL LINE</span>
+                <h1 class="collection-title">Sắc Thu Cổ Điển</h1>
+                <p class="collection-desc">Tinh hoa nghệ thuật giao thoa giữa nét cổ điển quý phái cùng hơi thở thời đại đầy cá tính.</p>
+                <a th:href="@{/products}" class="collection-btn">Trải Nghiệm Bộ Sưu Tập</a>
+            </div>
+        </div>
+
+        <!-- BỘ SƯU TẬP 3 -->
+        <div class="slide">
+            <!-- 
+                ==========================================================
+                DÁN LINK ẢNH BỘ SƯU TẬP 3 VÀO THUỘC TÍNH src DƯỚI ĐÂY
+                Ví dụ: src="https://ten-mien-cua-ban.com/hinh-anh.jpg"
+                ==========================================================
+            -->
+            <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2070&auto=format&fit=crop" alt="Bộ sưu tập Tối Giản">
+            <div class="slide-overlay"></div>
+            <div class="slide-content">
+                <span class="collection-tag">ESSENTIALS</span>
+                <h1 class="collection-title">Tối Giản Độc Bản</h1>
+                <p class="collection-desc">Định nghĩa lại phong cách thời trang bền vững qua những phom dáng chuẩn mực và tinh tế nhất.</p>
+                <a th:href="@{/products}" class="collection-btn">Xem Ngay</a>
+            </div>
+        </div>
+
+        <!-- NÚT ĐIỀU HƯỚNG SLIDER -->
+        <button class="slider-arrow prev-arrow" onclick="changeSlide(-1)">&amp;#10094;</button>
+        <button class="slider-arrow next-arrow" onclick="changeSlide(1)">&amp;#10095;</button>
+
+        <!-- DẤU CHẤM CHỈ SỐ SLIDE -->
+        <div class="slider-dots">
+            <span class="dot active" onclick="goToSlide(0)"></span>
+            <span class="dot" onclick="goToSlide(1)"></span>
+            <span class="dot" onclick="goToSlide(2)"></span>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT ĐIỀU KHIỂN SLIDER TRƯỢT MƯỢT MÀ -->
+    <script>
+        let currentIdx = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        const totalSlides = slides.length;
+        let slideInterval = setInterval(() => changeSlide(1), 6000); // Tự động chuyển sau mỗi 6 giây
+
+        function updateSlider() {
+            slides.forEach((slide, idx) => {
+                if (idx === currentIdx) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            dots.forEach((dot, idx) => {
+                if (idx === currentIdx) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function changeSlide(direction) {
+            currentIdx = (currentIdx + direction + totalSlides) % totalSlides;
+            updateSlider();
+            resetInterval();
+        }
+
+        function goToSlide(idx) {
+            currentIdx = idx;
+            updateSlider();
+            resetInterval();
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => changeSlide(1), 6000);
+        }
+
+        // Tối ưu hóa đổi màu nền navbar khi trượt/scroll nếu cần mở rộng thêm
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.home-nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(0, 0, 0, 0.7)';
+            } else {
+                nav.style.background = 'rgba(0, 0, 0, 0.2)';
+            }
+        });
+    </script>
+</body>
+</html>

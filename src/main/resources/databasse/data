@@ -1,0 +1,217 @@
+-- 1. Bảng phân quyền
+CREATE TABLE roles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    role_name VARCHAR(50) NOT NULL UNIQUE,
+    description VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 2. Bảng người dùng
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    role_id INT DEFAULT 3,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    fullname VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(15),
+    avatar VARCHAR(255) DEFAULT 'default-avatar.png',
+    status TINYINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 3. Bảng sổ địa chỉ khách hàng (MỚI THÊM)
+CREATE TABLE addresses (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    receiver_name VARCHAR(255) NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    address_line TEXT NOT NULL,
+    is_default TINYINT DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 4. Bảng danh mục sản phẩm
+CREATE TABLE categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    parent_id INT DEFAULT NULL,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    status TINYINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 5. Bảng thương hiệu
+CREATE TABLE brands (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    slug VARCHAR(100) NOT NULL UNIQUE,
+    logo VARCHAR(255) DEFAULT NULL,
+    status TINYINT DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 6. Bảng sản phẩm gốc
+CREATE TABLE products (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    category_id INT,
+    brand_id INT,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    gender_target ENUM('Nam', 'Nữ', 'Unisex') DEFAULT 'Unisex',
+    base_price DECIMAL(10,2) NOT NULL,
+    sale_price DECIMAL(10,2) DEFAULT NULL,
+    thumbnail VARCHAR(255) NOT NULL,
+    description TEXT,
+    view_count INT DEFAULT 0,
+    is_featured TINYINT DEFAULT 0,
+    status TINYINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
+    FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Bảng biến thể sản phẩm (Size / Màu)
+CREATE TABLE product_variants (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    size VARCHAR(50) NOT NULL,
+    color VARCHAR(50) NOT NULL,
+    stock_quantity INT NOT NULL DEFAULT 0,
+    variant_image VARCHAR(255) DEFAULT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. Bảng nhiều ảnh sản phẩm/biến thể (MỚI THÊM)
+CREATE TABLE product_images (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    variant_id INT DEFAULT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    sort_order INT DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 9. Bảng mã giảm giá (Vouchers)
+CREATE TABLE vouchers (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    discount_type ENUM('percentage', 'fixed') NOT NULL,
+    discount_value DECIMAL(10,2) NOT NULL,
+    min_order_value DECIMAL(10,2) DEFAULT 0,
+    max_discount_amount DECIMAL(10,2) DEFAULT NULL,
+    usage_limit INT DEFAULT 100,
+    used_count INT DEFAULT 0,
+    start_date DATETIME NOT NULL,
+    end_date DATETIME NOT NULL,
+    status TINYINT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 10. Bảng giỏ hàng
+CREATE TABLE cart (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    variant_id INT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 11. Bảng đơn hàng gốc
+CREATE TABLE orders (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NULL,
+    voucher_id INT NULL,
+    shipping_fullname VARCHAR(255) NOT NULL,
+    shipping_phone VARCHAR(15) NOT NULL,
+    shipping_address TEXT NOT NULL,
+    total_raw DECIMAL(10,2) NOT NULL,
+    discount_amount DECIMAL(10,2) DEFAULT 0,
+    shipping_fee DECIMAL(10,2) DEFAULT 0,
+    total_final DECIMAL(10,2) NOT NULL,
+    payment_method ENUM('COD', 'VNPAY', 'MOMO', 'BANK_TRANSFER') DEFAULT 'COD',
+    payment_status ENUM('Unpaid', 'Paid', 'Refunded') DEFAULT 'Unpaid',
+    order_status ENUM('Pending', 'Confirmed', 'Shipping', 'Delivered', 'Cancelled') DEFAULT 'Pending',
+    note TEXT,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (voucher_id) REFERENCES vouchers(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 12. Bảng chi tiết đơn hàng
+CREATE TABLE order_details (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    variant_id INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    quantity INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 13. Bảng lịch sử trạng thái đơn hàng (MỚI THÊM)
+CREATE TABLE order_status_history (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    note VARCHAR(255),
+    changed_by INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (changed_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 14. Bảng ghi nhận lượt dùng Voucher của từng User (MỚI THÊM)
+CREATE TABLE voucher_usages (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    voucher_id INT NOT NULL,
+    user_id INT NOT NULL,
+    order_id INT NOT NULL,
+    used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (voucher_id) REFERENCES vouchers(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 15. Bảng giao dịch thanh toán trực tuyến (MỚI THÊM)
+CREATE TABLE payment_transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    provider VARCHAR(50) NOT NULL,
+    transaction_code VARCHAR(100),
+    amount DECIMAL(10,2) NOT NULL,
+    status ENUM('Pending','Success','Failed') DEFAULT 'Pending',
+    raw_response TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 16. Bảng đánh giá sản phẩm
+CREATE TABLE reviews (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating TINYINT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 17. Bảng danh sách yêu thích (MỚI THÊM)
+CREATE TABLE wishlists (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_wishlist (user_id, product_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

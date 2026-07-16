@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thong ke</a>
+        <a th:href="@{/admin/products}">San pham</a>
+        <a th:href="@{/admin/orders}">Don hang</a>
+        <a th:href="@{/products}">Ve shop</a>
+    </nav>
+    <h1>Thong ke doanh thu</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Ngay</th>
+            <th>So don da giao</th>
+            <th>Doanh thu</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${stats}">
+            <td th:text="${row.order_day}">Ngay</td>
+            <td th:text="${row.total_orders}">0</td>
+            <td th:text="${#numbers.formatDecimal(row.revenue, 0, 'COMMA', 0, 'POINT')}">0</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

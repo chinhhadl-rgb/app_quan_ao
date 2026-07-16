@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quan ly san pham</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thong ke</a>
+        <a th:href="@{/admin/products}">San pham</a>
+        <a th:href="@{/admin/orders}">Don hang</a>
+    </nav>
+
+    <h1>Quan ly san pham</h1>
+    <form th:action="@{/admin/products/save}" method="post" class="form panel">
+        <h2>Them san pham</h2>
+        <label>Danh muc</label>
+        <select name="categoryId">
+            <option value="">Khong chon</option>
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">Danh muc</option>
+        </select>
+        <label>Ten</label>
+        <input name="name" required>
+        <label>Slug</label>
+        <input name="slug" required>
+        <label>Gia goc</label>
+        <input type="number" name="basePrice" required>
+        <label>Gia sale</label>
+        <input type="number" name="salePrice">
+        <label>Thumbnail</label>
+        <input name="thumbnail" required placeholder="/images/product.jpg hoac URL">
+        <label>Mo ta</label>
+        <textarea name="description"></textarea>
+        <button type="submit">Luu san pham</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ten</th>
+            <th>Danh muc</th>
+            <th>Gia</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}">1</td>
+            <td th:text="${product.name}">Ten</td>
+            <td th:text="${product.category_name}">Danh muc</td>
+            <td th:text="${#numbers.formatDecimal(product.base_price, 0, 'COMMA', 0, 'POINT')}">0</td>
+            <td th:text="${product.status}">1</td>
+            <td>
+                <form th:action="@{/admin/products/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${product.id}">
+                    <button type="submit">An</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

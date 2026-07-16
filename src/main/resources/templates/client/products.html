@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chinh Fashion | Sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+    <nav class="nav" style="justify-content: space-between; padding: 16px 8%;">
+        <a th:href="@{/}" style="font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; color: var(--apple-text);">CHINH FASHION</a>
+        <div style="display: flex; align-items: center; gap: 32px;">
+            <a th:href="@{/products}">Sản phẩm</a>
+            <a th:href="@{/cart}">Giỏ hàng</a>
+            <a th:href="@{/login}" th:if="${session.userId == null}">Đăng nhập</a>
+            <form th:action="@{/logout}" method="post" th:if="${session.userId != null}" style="display: inline; margin: 0;">
+                <button type="submit">Đăng xuất</button>
+            </form>
+            <a th:href="@{/admin}" th:if="${session.role == 'admin' || session.role == 'staff'}">Admin</a>
+        </div>
+    </nav>
+
+    <!-- THANH MENU DANH MỤC PHÂN CẤP (APPLE/ZARA STYLE) -->
+    <div class="categories-menu-bar" th:if="${menuCategories != null && !menuCategories.isEmpty()}">
+        <div class="category-item" th:each="cat : ${menuCategories}">
+            <span class="category-link" th:text="${cat.name}">Category Parent</span>
+            <div class="category-dropdown" th:if="${cat.subCategories != null && !cat.subCategories.isEmpty()}">
+                <a th:each="subCat : ${cat.subCategories}" 
+                   th:href="@{/products(categoryId=${subCat.id})}" 
+                   th:text="${subCat.name}">Sub Category</a>
+            </div>
+        </div>
+        <a th:href="@{/products}" style="font-size: 11px; text-decoration: none; color: #ff3b30; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; margin-left: 10px;">Tất cả sản phẩm</a>
+    </div>
+
+    <div class="container">
+        <h1 class="products-title-custom">Tất cả sản phẩm</h1>
+        <p class="products-subtitle-custom">Khám phá các thiết kế thời thượng nhất từ các thương hiệu của Chinh Fashion</p>
+
+        <form class="filters" th:action="@{/products}" method="get" id="filterForm" style="display: block; gap: 0;">
+            <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+                <select name="categoryId" onchange="document.getElementById('filterForm').submit()">
+                    <option value="">Tất cả danh mục</option>
+                    <option th:each="category : ${categories}"
+                            th:value="${category.id}"
+                            th:selected="${category.id == categoryId}"
+                            th:text="${category.name}">Danh mục</option>
+                </select>
+                <input type="number" name="minPrice" placeholder="Giá từ" th:value="${minPrice}">
+                <input type="number" name="maxPrice" placeholder="Giá đến" th:value="${maxPrice}">
+                <button type="submit">Lọc giá</button>
+            </div>
+            
+            <!-- BỘ LỌC THƯƠNG HIỆU PHỤ DẠNG CHECKBOX -->
+            <div class="brand-filter-container" th:if="${brands != null && !brands.isEmpty()}">
+                <span class="brand-filter-title">Thương hiệu:</span>
+                <div class="brand-checkboxes">
+                    <label class="brand-checkbox-label" th:each="brand : ${brands}">
+                        <input type="checkbox" name="brandId" th:value="${brand.id}"
+                               th:checked="${brand.id == brandId}"
+                               onchange="submitBrandFilter(this)">
+                        <span th:text="${brand.name}">Brand Name</span>
+                    </label>
+                </div>
+            </div>
+        </form>
+
+        <!-- DANH SÁCH SẢN PHẨM: "BÀN TRƯNG BÀY" PHONG CÁCH APPLE -->
+        <div class="apple-grid">
+            <div class="apple-card" th:each="product : ${products}" 
+                 th:id="'product-card-' + ${product.id}"
+                 th:data-default-img="${product.thumbnail}"
+                 th:onmouseenter="'handleCardHover(' + ${product.id} + ', true)'"
+                 th:onmouseleave="'handleCardHover(' + ${product.id} + ', false)'">
+                 
+                <!-- Khung ảnh nền xám/trắng trơ tối giản -->
+                <a th:href="@{/products/{id}(id=${product.id})}" style="text-decoration: none; display: block;">
+                    <div class="apple-card-img-wrapper">
+                        <img th:id="'product-img-' + ${product.id}" th:src="${product.thumbnail}" th:alt="${product.name}">
+                    </div>
+                </a>
+                
+                <!-- Color Swatches (Chấm tròn màu sắc) -->
+                <div class="color-swatches" th:if="${product.colorVariants != null && !product.colorVariants.isEmpty()}">
+                    <span th:each="cVar, status : ${product.colorVariants}"
+                          class="swatch-dot"
+                          th:classappend="${status.first} ? 'active' : ''"
+                          th:data-color="${cVar.color}"
+                          th:data-img="${cVar.variant_image != null ? cVar.variant_image : product.thumbnail}"
+                          th:onmouseenter="'changeProductImage(' + ${product.id} + ', this)'">
+                    </span>
+                </div>
+                
+                <!-- Thông tin áo và giá tiền -->
+                <a th:href="@{/products/{id}(id=${product.id})}" style="text-decoration: none; color: inherit;">
+                    <h3 class="product-title" th:text="${product.name}">Tên sản phẩm</h3>
+                    <p class="product-category" th:text="${product.category_name}">Danh mục</p>
+                    <div class="product-price" th:text="${#numbers.formatDecimal(product.sale_price != null ? product.sale_price : product.base_price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="pagination">
+            <a th:if="${page > 1}"
+               th:href="@{/products(page=${page - 1}, size=${size}, categoryId=${categoryId}, brandId=${brandId}, minPrice=${minPrice}, maxPrice=${maxPrice})}">&larr; Trang trước</a>
+            <span style="color: #86868b; font-size: 14px;" th:text="'Trang ' + ${page} + ' / ' + (${totalPages == 0 ? 1 : totalPages})">Trang</span>
+            <a th:if="${page < totalPages}"
+               th:href="@{/products(page=${page + 1}, size=${size}, categoryId=${categoryId}, brandId=${brandId}, minPrice=${minPrice}, maxPrice=${maxPrice})}">Trang sau &rarr;</a>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT XỬ LÝ COLOR SWATCHES VÀ HIỆU ỨNG HOVER ĐỔI ẢNH APPLE -->
+    <script>
+        // Bản đồ dịch tên màu sang mã Hex CSS để vẽ các chấm màu sinh động
+        const colorMap = {
+            'đen': '#1d1d1f',
+            'black': '#1d1d1f',
+            'trắng': '#ffffff',
+            'white': '#fbfbfd',
+            'đỏ': '#e03e3e',
+            'red': '#e03e3e',
+            'nâu': '#8b5a2b',
+            'brown': '#8b5a2b',
+            'xanh': '#0071e3',
+            'blue': '#0071e3',
+            'xanh lá': '#34c759',
+            'green': '#34c759',
+            'vàng': '#ffcc00',
+            'yellow': '#ffcc00',
+            'xám': '#86868b',
+            'gray': '#86868b',
+            'ghi': '#86868b',
+            'hồng': '#ff2d55',
+            'pink': '#ff2d55',
+            'cam': '#ff9500',
+            'orange': '#ff9500',
+            'tím': '#af52de',
+            'purple': '#af52de',
+            'kem': '#f5f5dc',
+            'cream': '#f5f5dc',
+            'beige': '#e1d5c2'
+        };
+
+        // Gán mã màu hex cho từng chấm dựa trên tên màu trong DB
+        document.querySelectorAll('.swatch-dot').forEach(dot => {
+            const colorName = dot.getAttribute('data-color').toLowerCase().trim();
+            if (colorMap[colorName]) {
+                dot.style.backgroundColor = colorMap[colorName];
+            } else {
+                dot.style.backgroundColor = colorName; // Fallback lấy trực tiếp tên/mã
+            }
+        });
+
+        // Thay đổi ảnh khi hover trực tiếp vào chấm tròn màu sắc
+        function changeProductImage(productId, element) {
+            const img = document.getElementById('product-img-' + productId);
+            if (img) {
+                const newSrc = element.getAttribute('data-img');
+                img.src = newSrc;
+                
+                // Cập nhật trạng thái active cho chấm màu
+                const parent = element.parentElement;
+                parent.querySelectorAll('.swatch-dot').forEach(d => d.classList.remove('active'));
+                element.classList.add('active');
+            }
+        }
+
+        // Hiệu ứng rê chuột vào cả ô sản phẩm (chuyển sang màu khác của sản phẩm nếu có)
+        function handleCardHover(productId, isHover) {
+            const card = document.getElementById('product-card-' + productId);
+            const img = document.getElementById('product-img-' + productId);
+            
+            if (isHover) {
+                const swatches = card.querySelectorAll('.swatch-dot');
+                if (swatches.length > 1) {
+                    // Xác định vị trí chấm đang active
+                    let activeIdx = 0;
+                    swatches.forEach((sw, idx) => {
+                        if (sw.classList.contains('active')) activeIdx = idx;
+                    });
+                    
+                    // Lựa chọn chấm màu tiếp theo để tráo ảnh
+                    const nextIdx = (activeIdx + 1) % swatches.length;
+                    const nextSwatch = swatches[nextIdx];
+                    
+                    img.style.opacity = '0.4';
+                    setTimeout(() => {
+                        img.src = nextSwatch.getAttribute('data-img');
+                        img.style.opacity = '1';
+                    }, 180);
+                }
+            } else {
+                // Khi rời chuột ra, trả lại ảnh tương ứng với chấm đang được lựa chọn active
+                const activeSwatch = card.querySelector('.swatch-dot.active');
+                const defaultImg = activeSwatch ? activeSwatch.getAttribute('data-img') : card.getAttribute('data-default-img');
+                
+                img.style.opacity = '0.4';
+                setTimeout(() => {
+                    img.src = defaultImg;
+                    img.style.opacity = '1';
+                }, 180);
+            }
+        }
+
+        // Tự động bỏ chọn các Checkbox brand khác khi chọn một brand mới (do backend lọc 1 brandId)
+        function submitBrandFilter(checkbox) {
+            if (checkbox.checked) {
+                const checkboxes = document.querySelectorAll('input[name="brandId"]');
+                checkboxes.forEach(cb => {
+                    if (cb !== checkbox) cb.checked = false;
+                });
+            }
+            document.getElementById('filterForm').submit();
+        }
+    </script>
+</body>
+</html>

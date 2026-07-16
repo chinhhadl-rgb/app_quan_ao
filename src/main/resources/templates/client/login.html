@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinh Fashion | Đăng nhập</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body style="margin: 0; padding: 0;">
+
+    <div class="login-wrapper">
+        <!-- CỘT BÊN TRÁI: HÌNH NỀN THỜI TRANG ĐEN TRẮNG -->
+        <div class="login-banner">
+            <!-- Bạn có thể thay đổi link ảnh thời trang này bằng cách dán link khác vào thuộc tính src dưới đây -->
+            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1974&auto=format&fit=crop" alt="Chinh Fashion Banner">
+            <div class="login-banner-overlay"></div>
+            <div class="login-banner-content">
+                <div class="login-banner-brand">CHINH FASHION</div>
+                <p class="login-banner-quote">“Thời trang không chỉ là những bộ trang phục bạn khoác lên người, mà là cách bạn định hình bản thân trước thế giới.”</p>
+            </div>
+        </div>
+        <div class="login-form-container">
+            <a th:href="@{/}" class="login-back-home">
+                <span>&larr;</span> Quay lại cửa hàng
+            </a>
+
+            <div class="login-form-box">
+                <h1 class="login-title">Đăng Nhập</h1>
+                <p class="login-subtitle">Chào mừng bạn trở lại với Chinh Fashion.</p>
+                
+                <!-- Báo lỗi đăng nhập nếu có -->
+                <div class="error" th:if="${error}" th:text="${error}" style="margin-bottom: 24px; border-radius: 0; font-size: 14px;">Lỗi đăng nhập</div>
+                
+                <form th:action="@{/login}" method="post" class="form" style="display: block; gap: 0;">
+                    <div class="login-input-group">
+                        <label for="username">Tên đăng nhập / Email</label>
+                        <input type="text" id="username" name="username" class="login-input" placeholder="Nhập tên đăng nhập của bạn" required autocomplete="username">
+                    </div>
+                    
+                    <div class="login-input-group" style="margin-bottom: 32px;">
+                        <label for="password">Mật khẩu</label>
+                        <input type="password" id="password" name="password" class="login-input" placeholder="Nhập mật khẩu" required autocomplete="current-password">
+                    </div>
+                    
+                    <button type="submit" class="login-btn-black">Đăng Nhập</button>
+                </form>
+                
+                <p class="login-switch-page">Chưa có tài khoản? <a th:href="@{/register}">Đăng ký ngay</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
