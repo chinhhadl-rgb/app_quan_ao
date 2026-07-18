@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sản phẩm của thương hiệu</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thống kê</a>
+        <a th:href="@{/admin/products}">Sản phẩm</a>
+        <a th:href="@{/admin/categories}">Danh mục</a>
+        <a th:href="@{/admin/brands}">Thương hiệu</a>
+        <a th:href="@{/admin/orders}">Đơn hàng</a>
+        <a th:href="@{/admin/users}">Người dùng</a>
+        <a th:href="@{/products}">Về shop</a>
+    </nav>
+
+    <div style="margin-bottom: 30px;">
+        <a th:href="@{/admin/brands}" style="color: #0071e3; text-decoration: none;">&larr; Quay lại danh sách thương hiệu</a>
+    </div>
+
+    <h1>Sản phẩm của thương hiệu: <span th:text="${brand.name}">Brand</span></h1>
+    <p style="color: #86868b;">Nhấn vào sản phẩm để thay đổi thông tin</p>
+
+    <div class="apple-grid">
+        <a th:each="product : ${products}" th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="apple-card">
+            <div class="apple-card-img-wrapper">
+                <img th:src="${product.thumbnail}" th:alt="${product.name}">
+            </div>
+            <h3 class="product-title" th:text="${product.name}">Tên sản phẩm</h3>
+            <p class="product-category" th:text="${product.category_name}">Danh mục</p>
+            <div class="product-price" th:text="${#numbers.formatDecimal(product.sale_price != null ? product.sale_price : product.base_price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</div>
+        </a>
+    </div>
+
+    <div th:if="${products.isEmpty()}" style="text-align: center; padding: 50px; background: #f5f5f7; border-radius: 12px; margin-top: 30px;">
+        <p>Thương hiệu này chưa có sản phẩm nào.</p>
+        <a th:href="@{/admin/products}" class="button">Thêm sản phẩm ngay</a>
+    </div>
+</div>
+</body>
+</html>

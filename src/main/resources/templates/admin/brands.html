@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Thương hiệu</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .brand-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: #1d1d1f;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+        .brand-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            border-color: #0071e3;
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="admin-body">
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thống kê</a>
+        <a th:href="@{/admin/revenue}">Thu nhập</a>
+        <a th:href="@{/admin/products}">Sản phẩm</a>
+        <a th:href="@{/admin/brands}">Thương hiệu</a>
+        <a th:href="@{/admin/orders}">Đơn hàng</a>
+        <a th:href="@{/admin/users}">Người dùng</a>
+        <a th:href="@{/products}">Về shop</a>
+    </nav>
+
+    <h1>Quản lý theo Thương hiệu</h1>
+    <p style="color: #86868b;">Chọn một thương hiệu để xem và quản lý sản phẩm</p>
+
+    <div class="brand-grid">
+        <a th:each="brand : ${brands}" th:href="@{/admin/brands/{id}/products(id=${brand.id})}" class="brand-card">
+            <div class="brand-name" th:text="${brand.name}">Tên thương hiệu</div>
+        </a>
+    </div>
+
+    <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #eee;">
+        <h2>Thêm thương hiệu mới</h2>
+        <form th:action="@{/admin/brands/save}" method="post" class="form panel">
+            <label>Tên thương hiệu</label>
+            <input name="name" required placeholder="VD: Nike, Zara...">
+            <label>Slug (đường dẫn)</label>
+            <input name="slug" required placeholder="VD: nike, zara">
+            <button type="submit">Lưu thương hiệu</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

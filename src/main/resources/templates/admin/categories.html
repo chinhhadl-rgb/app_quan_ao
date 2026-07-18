@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý danh mục</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thống kê</a>
+        <a th:href="@{/admin/products}">Sản phẩm</a>
+        <a th:href="@{/admin/categories}">Danh mục</a>
+        <a th:href="@{/admin/brands}">Thương hiệu</a>
+        <a th:href="@{/admin/orders}">Đơn hàng</a>
+        <a th:href="@{/admin/users}">Người dùng</a>
+        <a th:href="@{/products}">Về shop</a>
+    </nav>
+
+    <h1>Quản lý danh mục</h1>
+    <form th:action="@{/admin/categories/save}" method="post" class="form panel">
+        <h2>Thêm/Sửa danh mục</h2>
+        <input type="hidden" name="id" id="catId">
+        <label>Tên danh mục</label>
+        <input name="name" id="catName" required>
+        <label>Slug</label>
+        <input name="slug" id="catSlug" required>
+        <button type="submit">Lưu danh mục</button>
+        <button type="button" onclick="resetForm()">Làm mới</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên danh mục</th>
+            <th>Slug</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cat : ${categories}">
+            <td th:text="${cat.id}">1</td>
+            <td th:text="${cat.name}">Name</td>
+            <td th:text="${cat.slug}">slug</td>
+            <td>
+                <button th:onclick="'editCat(' + ${cat.id} + ', \'' + ${cat.name} + '\', \'' + ${cat.slug} + '\')'">Sửa</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function editCat(id, name, slug) {
+        document.getElementById('catId').value = id;
+        document.getElementById('catName').value = name;
+        document.getElementById('catSlug').value = slug;
+    }
+    function resetForm() {
+        document.getElementById('catId').value = '';
+        document.getElementById('catName').value = '';
+        document.getElementById('catSlug').value = '';
+    }
+</script>
+</body>
+</html>

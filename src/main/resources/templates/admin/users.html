@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý người dùng</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="container">
+    <style>
+        .user-badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-admin { background: #ff3b30; color: #fff; }
+        .badge-staff { background: #ff9500; color: #fff; }
+        .badge-user { background: #f5f5f7; color: #86868b; }
+        .user-info-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f5f5f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #0071e3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thống kê</a>
+        <a th:href="@{/admin/revenue}">Thu nhập</a>
+        <a th:href="@{/admin/products}">Sản phẩm</a>
+        <a th:href="@{/admin/brands}">Thương hiệu</a>
+        <a th:href="@{/admin/orders}">Đơn hàng</a>
+        <a th:href="@{/admin/users}">Người dùng</a>
+        <a th:href="@{/products}">Về shop</a>
+    </nav>
+
+    <h1>Quản lý người dùng</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Người dùng</th>
+            <th>Liên hệ</th>
+            <th>Quyền</th>
+            <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">1</td>
+            <td>
+                <div class="user-info-box">
+                    <div class="user-avatar" th:text="${#strings.substring(user.fullname, 0, 1)}">C</div>
+                    <div>
+                        <div style="font-weight: 600;" th:text="${user.fullname}">Fullname</div>
+                        <div style="font-size: 12px; color: #86868b;" th:text="'@' + ${user.username}">username</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div style="font-size: 13px;" th:text="${user.email}">email</div>
+                <div style="font-size: 12px; color: #86868b;" th:text="${user.phone != null ? user.phone : 'Chưa có SĐT'}">phone</div>
+            </td>
+            <td>
+                <span class="user-badge" 
+                      th:classappend="${user.role_name == 'ROLE_ADMIN' ? 'badge-admin' : (user.role_name == 'ROLE_STAFF' ? 'badge-staff' : 'badge-user')}"
+                      th:text="${user.role_name}">Role</span>
+            </td>
+            <td>
+                <form th:action="@{/admin/users/role}" method="post" class="inline">
+                    <input type="hidden" name="userId" th:value="${user.id}">
+                    <select name="roleId" style="padding: 6px 12px; font-size: 13px;">
+                        <option th:each="role : ${roles}" 
+                                th:value="${role.id}" 
+                                th:text="${role.role_name}"
+                                th:selected="${role.id == user.role_id}">Role</option>
+                    </select>
+                    <button type="submit" style="padding: 6px 12px; font-size: 13px;">Cập nhật</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
