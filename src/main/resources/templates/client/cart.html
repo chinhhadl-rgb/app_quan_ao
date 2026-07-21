@@ -20,55 +20,144 @@
         </div>
 
         <div th:if="${!#lists.isEmpty(items)}">
-            <div class="panel" style="padding: 0; margin-bottom: 32px;">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Sản phẩm</th>
-                        <th>Phân loại</th>
-                        <th>Đơn giá</th>
-                        <th>Số lượng</th>
-                        <th>Tạm tính</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="item : ${items}">
-                        <td style="font-weight: 500;">
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <img th:src="${item.thumbnail}" style="width:48px; height:48px; object-fit:contain; border-radius:4px; background:#f5f5f7;">
-                                <span th:text="${item.name}">Ten</span>
-                            </div>
-                        </td>
-                        <td style="color:#86868b; font-size:14px;" th:text="${item.size + ' - ' + item.color}">Variant</td>
-                        <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
-                        <td>
-                            <form th:action="@{/cart/update}" method="post" class="inline" style="margin:0;">
-                                <input type="hidden" name="cartId" th:value="${item.cart_id}">
-                                <input type="number" name="quantity" min="0" th:value="${item.quantity}" style="width:60px; padding:8px;">
-                                <button type="submit" style="padding:8px 12px; font-size:13px; background:#f5f5f7; color:#1d1d1f;">Cập nhật</button>
-                            </form>
-                        </td>
-                        <td style="font-weight:600;" th:text="${#numbers.formatDecimal(item.line_total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
-                        <td>
-                            <form th:action="@{/cart/remove}" method="post" style="margin:0;">
-                                <input type="hidden" name="cartId" th:value="${item.cart_id}">
-                                <button type="submit" style="background:transparent; color:#ff3b30; font-size:13px; font-weight:500;">Xóa</button>
-                            </form>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="panel" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <p style="margin:0; color:#86868b; font-size:14px;">Tổng thanh toán</p>
-                    <h2 style="margin:4px 0 0 0; font-size:28px;" th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">Tong</h2>
+            <form th:action="@{/checkout}" method="get" id="cartForm">
+                <div class="panel" style="padding: 0; margin-bottom: 32px;">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th style="width: 40px; text-align: center;">
+                                <input type="checkbox" id="selectAll" checked onchange="toggleAll(this)">
+                            </th>
+                            <th>Sản phẩm</th>
+                            <th>Phân loại</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Tạm tính</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${items}">
+                            <td style="text-align: center;">
+                                <input type="checkbox" name="cartIds" th:value="${item.cart_id}" checked class="cart-checkbox" onchange="updateTotal()">
+                            </td>
+                            <td style="font-weight: 500;">
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <img th:src="${item.thumbnail}" style="width:48px; height:48px; object-fit:contain; border-radius:4px; background:#f5f5f7;">
+                                    <span th:text="${item.name}">Ten</span>
+                                </div>
+                            </td>
+                            <td style="color:#86868b; font-size:14px;" th:text="${item.size + ' - ' + item.color}">Variant</td>
+                            <td th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
+                            <td>
+                                <div class="inline" style="margin:0; gap: 4px;">
+                                    <input type="number" th:id="'qty-' + ${item.cart_id}" min="1" th:value="${item.quantity}" style="width:50px; padding:6px;" onchange="updateCartQuantity(this)">
+                                    <button type="button" th:onclick="'saveQuantity(' + ${item.cart_id} + ')'" style="padding:6px 10px; font-size:11px; background:#f5f5f7; color:#1d1d1f; border-radius: 4px;">Lưu</button>
+                                </div>
+                            </td>
+                            <td style="font-weight:600;" class="item-line-total" th:data-price="${item.price}" th:text="${#numbers.formatDecimal(item.line_total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
+                            <td>
+                                <button type="button" th:onclick="'removeFromCart(' + ${item.cart_id} + ')'" style="background:transparent; border:none; color:#ff3b30; font-size:13px; font-weight:500; cursor:pointer;">Xóa</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <a class="button" th:href="@{/checkout}" style="padding: 16px 32px; font-size: 16px;">Tiến hành thanh toán</a>
-            </div>
+
+                <div class="panel" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="margin:0; color:#86868b; font-size:14px;">Tổng thanh toán (<span id="selectedCount">0</span> sản phẩm)</p>
+                        <h2 style="margin:4px 0 0 0; font-size:28px; color: var(--apple-blue);" id="displayTotal">0 ₫</h2>
+                    </div>
+                    <button type="submit" class="button" style="padding: 16px 32px; font-size: 16px; border:none;">Tiến hành thanh toán</button>
+                </div>
+            </form>
         </div>
+    </div>
+
+    <script>
+        function toggleAll(source) {
+            const checkboxes = document.querySelectorAll('.cart-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const checkboxes = document.querySelectorAll('.cart-checkbox:checked');
+            let total = 0;
+            let count = 0;
+            
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                const lineTotalElement = row.querySelector('.item-line-total');
+                const qtyInput = row.querySelector('input[type="number"]');
+                const price = parseFloat(lineTotalElement.getAttribute('data-price'));
+                const qty = parseInt(qtyInput.value);
+                
+                total += price * qty;
+                count++;
+            });
+
+            document.getElementById('displayTotal').innerText = total.toLocaleString('vi-VN') + ' ₫';
+            document.getElementById('selectedCount').innerText = count;
+            
+            // Disable nút thanh toán nếu không chọn gì
+            const btn = document.querySelector('#cartForm button[type="submit"]');
+            btn.disabled = count === 0;
+            btn.style.opacity = count === 0 ? '0.5' : '1';
+            btn.style.cursor = count === 0 ? 'not-allowed' : 'pointer';
+        }
+
+        function saveQuantity(cartId) {
+            const qty = document.getElementById('qty-' + cartId).value;
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/cart/update';
+            
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'cartId';
+            idInput.value = cartId;
+            
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'hidden';
+            qtyInput.name = 'quantity';
+            qtyInput.value = qty;
+            
+            form.appendChild(idInput);
+            form.appendChild(qtyInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function removeFromCart(cartId) {
+            if(confirm('Xóa sản phẩm này khỏi giỏ hàng?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/cart/remove';
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'cartId';
+                idInput.value = cartId;
+                form.appendChild(idInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function updateCartQuantity(input) {
+            const row = input.closest('tr');
+            const lineTotalElement = row.querySelector('.item-line-total');
+            const price = parseFloat(lineTotalElement.getAttribute('data-price'));
+            const qty = parseInt(input.value);
+            
+            lineTotalElement.innerText = (price * qty).toLocaleString('vi-VN') + ' ₫';
+            updateTotal();
+        }
+
+        // Khởi tạo tổng tiền khi load trang
+        document.addEventListener('DOMContentLoaded', updateTotal);
+    </script>
     </div>
 </body>
 </html>

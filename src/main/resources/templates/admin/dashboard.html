@@ -16,23 +16,126 @@
         <a th:href="@{/admin/users}">Người dùng</a>
         <a th:href="@{/products}">Về shop</a>
     </nav>
-    <h1>Thong ke doanh thu</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>Ngay</th>
-            <th>So don da giao</th>
-            <th>Doanh thu</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="row : ${stats}">
-            <td th:text="${row.order_day}">Ngay</td>
-            <td th:text="${row.total_orders}">0</td>
-            <td th:text="${#numbers.formatDecimal(row.revenue, 0, 'COMMA', 0, 'POINT')}">0</td>
-        </tr>
-        </tbody>
-    </table>
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+            text-align: center;
+        }
+        .stat-card h3 {
+            color: #86868b;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+        .dashboard-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .panel h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f5f5f7;
+            padding-bottom: 10px;
+        }
+    </style>
+
+    <h1>Tổng quan hệ thống</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Doanh thu tổng</h3>
+            <div class="value" th:text="${#numbers.formatDecimal(totals.total_revenue, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Đơn hàng thành công</h3>
+            <div class="value" th:text="${totals.total_orders}">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Khách hàng</h3>
+            <div class="value" th:text="${totals.total_customers}">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Sản phẩm</h3>
+            <div class="value" th:text="${totals.total_products}">0</div>
+        </div>
+    </div>
+
+    <div class="dashboard-row">
+        <div class="panel">
+            <h2>Doanh thu 10 ngày gần nhất</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Đơn hàng</th>
+                    <th>Doanh thu</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row : ${stats}">
+                    <td th:text="${row.order_day}">Ngay</td>
+                    <td th:text="${row.total_orders}">0</td>
+                    <td th:text="${#numbers.formatDecimal(row.revenue, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel">
+            <h2>Sản phẩm bán chạy</h2>
+            <div th:each="p : ${topProducts}" style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px;">
+                <span th:text="${p.name}" style="font-weight: 500;">Ten</span>
+                <span th:text="${p.sold_count} + ' cái'" style="color: #86868b;">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Đơn hàng mới chờ duyệt</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>Tổng tiền</th>
+                <th>Ngày đặt</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="o : ${pendingOrders}">
+                <td th:text="'#' + ${o.id}">#1</td>
+                <td th:text="${o.shipping_fullname}">Ten</td>
+                <td th:text="${#numbers.formatDecimal(o.total_final, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
+                <td th:text="${o.order_date}">Ngay</td>
+                <td>
+                    <a th:href="@{/admin/orders}" style="color: var(--apple-blue); font-size: 13px; font-weight: 500;">Xem chi tiết</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(pendingOrders)}">
+                <td colspan="5" style="text-align: center; color: #86868b; padding: 20px;">Không có đơn hàng mới nào.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </body>
 </html>

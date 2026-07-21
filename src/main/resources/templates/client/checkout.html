@@ -15,6 +15,7 @@
         <p class="error" th:if="${error}" th:text="${error}">Lỗi</p>
 
         <form th:action="@{/checkout}" method="post" class="form panel">
+            <input type="hidden" name="cartIds" th:value="${cartIds}">
             <div>
                 <label style="display:block; margin-bottom:8px; font-weight:500; color:#86868b;">Họ và tên</label>
                 <input name="fullname" required th:value="${user.fullname}" style="width:100%; box-sizing:border-box;">

@@ -60,11 +60,11 @@
                 <form th:action="@{/admin/orders/status}" method="post" class="inline">
                     <input type="hidden" name="id" th:value="${order.id}">
                     <select name="status">
-                        <option value="Pending" th:selected="${order.order_status == 'Pending'}">Cho duyet</option>
-                        <option value="Confirmed" th:selected="${order.order_status == 'Confirmed'}">Da xac nhan</option>
-                        <option value="Shipping" th:selected="${order.order_status == 'Shipping'}">Dang giao</option>
-                        <option value="Delivered" th:selected="${order.order_status == 'Delivered'}">Da giao</option>
-                        <option value="Cancelled" th:selected="${order.order_status == 'Cancelled'}">Da huy</option>
+                        <option value="Pending" th:selected="${order.order_status == 'Pending'}">Chờ duyệt ⏳</option>
+                        <option value="Confirmed" th:selected="${order.order_status == 'Confirmed'}">Đã xác nhận ✅</option>
+                        <option value="Shipping" th:selected="${order.order_status == 'Shipping'}">Đang giao 🚚</option>
+                        <option value="Delivered" th:selected="${order.order_status == 'Delivered'}">Đã giao 🏁</option>
+                        <option value="Cancelled" th:selected="${order.order_status == 'Cancelled'}">Đã hủy ❌</option>
                     </select>
                     <button type="submit">Luu</button>
                 </form>

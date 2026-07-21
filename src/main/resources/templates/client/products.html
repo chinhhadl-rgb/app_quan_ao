@@ -10,6 +10,7 @@
         <a th:href="@{/}" style="font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; color: var(--apple-text);">CHINH FASHION</a>
         <div style="display: flex; align-items: center; gap: 32px;">
             <a th:href="@{/products}">Sản phẩm</a>
+            <a th:href="@{/my-orders}" th:if="${session.userId != null}">Đơn hàng</a>
             <a th:href="@{/cart}">Giỏ hàng</a>
             <a th:href="@{/login}" th:if="${session.userId == null}">Đăng nhập</a>
             <form th:action="@{/logout}" method="post" th:if="${session.userId != null}" style="display: inline; margin: 0;">
