@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Hoàn trả</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="container">
+    <nav class="nav">
+        <a th:href="@{/admin}">Thống kê</a>
+        <a th:href="@{/admin/revenue}">Thu nhập</a>
+        <a th:href="@{/admin/returns}" style="color: var(--apple-blue); font-weight: 600;">Hoàn trả</a>
+        <a th:href="@{/admin/products}">Sản phẩm</a>
+        <a th:href="@{/admin/orders}">Đơn hàng</a>
+        <a th:href="@{/admin/users}">Người dùng</a>
+    </nav>
+
+    <h1>Yêu cầu hoàn trả</h1>
+
+    <div class="panel">
+        <table>
+            <thead>
+            <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>Lý do</th>
+                <th>Giá trị đơn</th>
+                <th>Ngày yêu cầu</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${returns}">
+                <td th:text="'#' + ${r.order_id}">#1</td>
+                <td th:text="${r.username}">User</td>
+                <td th:text="${r.reason}" style="max-width: 200px; font-size: 13px;">Reason</td>
+                <td th:text="${#numbers.formatDecimal(r.total_final, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</td>
+                <td th:text="${r.created_at}">Date</td>
+                <td>
+                    <span th:text="${r.status}" 
+                          th:style="${r.status == 'Pending' ? 'color: #ff9500' : (r.status == 'Approved' ? 'color: #34c759' : 'color: #ff3b30')}"
+                          style="font-weight: 600;">Pending</span>
+                </td>
+                <td>
+                    <form th:action="@{/admin/returns/update}" method="post" style="display: flex; gap: 5px;">
+                        <input type="hidden" name="returnId" th:value="${r.id}">
+                        <select name="status" style="padding: 4px; font-size: 12px;">
+                            <option value="Approved">Duyệt ✅</option>
+                            <option value="Rejected">Từ chối ❌</option>
+                        </select>
+                        <button type="submit" style="padding: 4px 8px; font-size: 12px; background: var(--apple-blue);">Lưu</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(returns)}">
+                <td colspan="7" style="text-align: center; color: #86868b; padding: 40px;">Không có yêu cầu hoàn trả nào.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

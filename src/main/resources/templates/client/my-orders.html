@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đơn hàng của tôi</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .order-card {
+            margin-bottom: 24px;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 16px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-confirmed { background: #d1ecf1; color: #0c5460; }
+        .status-shipping { background: #cfe2ff; color: #084298; }
+        .status-delivered { background: #d4edda; color: #155724; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        
+        .item-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        .item-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f5f5f7;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a th:href="@{/products}">Sản phẩm</a>
+        <a th:href="@{/cart}">Giỏ hàng</a>
+        <a th:href="@{/my-orders}" style="color: var(--apple-blue); font-weight: 600;">Đơn hàng</a>
+    </nav>
+
+    <div class="container narrow">
+        <h1 style="text-align: center; margin-bottom: 40px;">Đơn hàng của tôi</h1>
+
+        <div th:if="${#lists.isEmpty(orders)}" style="text-align: center; padding: 40px;">
+            <p style="color: #86868b;">Bạn chưa có đơn hàng nào.</p>
+            <a th:href="@{/products}" class="button" style="margin-top: 20px;">Mua sắm ngay</a>
+        </div>
+
+        <div th:each="order : ${orders}" class="panel order-card">
+            <div class="order-header">
+                <div>
+                    <strong th:text="'Mã đơn: #' + ${order.id}">#123</strong>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #86868b;" th:text="${order.order_date}">Ngày đặt</p>
+                </div>
+                <span class="status-badge" 
+                      th:classappend="'status-' + ${#strings.toLowerCase(order.order_status)}"
+                      th:text="${order.order_status}">Pending</span>
+            </div>
+
+            <div th:each="item : ${order.items}" class="item-row">
+                <img th:src="${item.thumbnail}" class="item-img">
+                <div style="flex: 1;">
+                    <div style="font-weight: 500;" th:text="${item.product_name}">Sản phẩm</div>
+                    <div style="font-size: 13px; color: #86868b;" th:text="'Size: ' + ${item.size} + ' x ' + ${item.quantity}">Size x SL</div>
+                    
+                    <!-- Form Đánh giá sản phẩm (Chỉ hiện khi đã giao) -->
+                    <div th:if="${order.order_status == 'Delivered'}" style="margin-top: 10px;">
+                        <button type="button" th:onclick="'showReviewForm(' + ${order.id} + ',' + ${item.product_id} + ')'" 
+                                style="font-size: 12px; background: #f5f5f7; color: var(--apple-blue); border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px;">
+                            Đánh giá sản phẩm
+                        </button>
+                    </div>
+                </div>
+                <div style="font-weight: 500;" th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 16px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; gap: 10px;">
+                    <span style="color: #86868b; font-size: 14px;" th:text="${order.payment_method}">COD</span>
+                    <!-- Nút Hoàn trả (Chỉ hiện khi đã giao) -->
+                    <button th:if="${order.order_status == 'Delivered'}" 
+                            th:onclick="'showReturnForm(' + ${order.id} + ')'"
+                            style="font-size: 12px; background: #fff; color: #ff3b30; border: 1px solid #ff3b30; padding: 2px 8px; cursor: pointer; border-radius: 4px;">
+                        Yêu cầu hoàn trả
+                    </button>
+                </div>
+                <div>
+                    <span style="font-size: 14px;">Tổng tiền: </span>
+                    <strong style="font-size: 18px; color: var(--apple-blue);" th:text="${#numbers.formatDecimal(order.total_final, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Đánh giá -->
+    <div id="reviewModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div class="panel" style="width:400px; padding:30px;">
+            <h3>Đánh giá sản phẩm</h3>
+            <form th:action="@{/reviews/add}" method="post">
+                <input type="hidden" name="orderId" id="revOrderId">
+                <input type="hidden" name="productId" id="revProductId">
+                <div style="margin-bottom:15px;">
+                    <label>Số sao:</label>
+                    <select name="rating" required style="width:100%;">
+                        <option value="5">5 Sao - Tuyệt vời</option>
+                        <option value="4">4 Sao - Tốt</option>
+                        <option value="3">3 Sao - Bình thường</option>
+                        <option value="2">2 Sao - Kém</option>
+                        <option value="1">1 Sao - Rất tệ</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <label>Bình luận:</label>
+                    <textarea name="comment" rows="3" style="width:100%; padding:8px;" placeholder="Cảm nhận của bạn về sản phẩm..."></textarea>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" style="flex:1;">Gửi đánh giá</button>
+                    <button type="button" onclick="closeModal('reviewModal')" style="flex:1; background:#f5f5f7; color:#1d1d1f;">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Hoàn trả -->
+    <div id="returnModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div class="panel" style="width:400px; padding:30px;">
+            <h3>Yêu cầu hoàn trả</h3>
+            <form th:action="@{/returns/request}" method="post">
+                <input type="hidden" name="orderId" id="retOrderId">
+                <div style="margin-bottom:15px;">
+                    <label>Lý do hoàn trả:</label>
+                    <textarea name="reason" rows="4" required style="width:100%; padding:8px;" placeholder="Vui lòng ghi rõ lý do bạn muốn trả hàng..."></textarea>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" style="flex:1; background:#ff3b30;">Gửi yêu cầu</button>
+                    <button type="button" onclick="closeModal('returnModal')" style="flex:1; background:#f5f5f7; color:#1d1d1f;">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showReviewForm(orderId, productId) {
+            document.getElementById('revOrderId').value = orderId;
+            document.getElementById('revProductId').value = productId;
+            document.getElementById('reviewModal').style.display = 'flex';
+        }
+        function showReturnForm(orderId) {
+            document.getElementById('retOrderId').value = orderId;
+            document.getElementById('returnModal').style.display = 'flex';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
+</body>
+</html>
